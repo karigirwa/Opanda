@@ -2,69 +2,106 @@
 $title = "Courses";
 require_once 'includes/header.php';
 require_once 'db/connect.php';
+$courses = $crud->getCourses();
+// $unduplicated_arr = [];
+// while ($r = $courses->fetch(PDO::FETCH_ASSOC)) {
+//   echo $r['level'] . "<br/>";
+//   if (!in_array($r['level'], $unduplicated_arr)) {
+//     array_push($unduplicated_arr, $r['level']);
+//     echo $r['level'] . "\n";
+//   }
+// }
+
 if (isset($_POST['submit'])) {
-    $subject= $_POST['subject'];
-    $level= $_POST['level'];
-    $units= $_POST['units'];
-    $result = $crud->getCourseInfos($subject, $level, $units);
+  $subject = $_POST['subject'];
+  $level = $_POST['level'];
+  $units = $_POST['units'];
+  $result = $crud->getCourseInfos($subject, $level, $units);
 
+  if ($result) {
+    $id = $result['id'];
+    $comments = $crud->getComments($id);
+    print_r($comments[0]);
+  }
+}
 
+if (isset($_POST['add_comment'])) {
+  $comment = $_POST['comment'];
+  $courses_id = $_POST['course_id'];
+  $user_id = "11";
+  if ($comment <> "" and $courses_id <> "") {
+    $result = $crud->insertComment($comment, $courses_id, $user_id);
+    if ($result) {
+      echo '<script type="text/javascript">
+       swal({ 
+              title: "Success",
+              text: "Your comment has been successful added!",
+              type: "success" 
+        });
+      </script>';
+    } else {
+      echo '<div class="alert alert-danger">Error occured while adding comment, try again</div>';
+    }
+  } else {
+    echo '<div class="alert alert-danger">Please write your comment.</div>';
+  }
 }
 ?>
- <div class="search-container mb-2">
-            <form action="index.php" method="POST" class="">
-                <div class="row p-3">
-                    <div class="col-md-7 col-12 search-select">
-                        <div class="form-group col-md-5 col-4">
-                            <label for="subject">Subject</label>
-                            <select id="subject" name="subject" class="form-select input-color">
-                                <option selected>Select</option>
-                                <option>Biology</option>
-                                <option>Chemistry</option>
-                                <option>Agriculture</option>
-                                <option>Physics</option>
-                                <option>History</option>
-                                <option>Mathematics</option>
-                            </select>
-                        </div>
 
-                        <div class="form-group col-md-3 col-4">
-                            <label for="level">Level</label>
-                            <select id="level" name="level" class="form-select input-color">
-                                <option selected> Select</option>
-                                <option > 1</option>
-                                <option> 2</option>
-                                <option> 3</option>
-                                <option> 4</option>
-                                <option> 5</option>
-                                <option> 6</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label for="units">Units</label>
-                            <select id="units" name="units" class="form-select input-color">
-                                <option selected> Select</option>
-                                <option>Unit 1</option>
-                                <option>Unit 2</option>
-                                <option>Unit 3</option>
-                                <option>Unit 4</option>
-                                <option>Unit 5</option>
-                                <option>Unit 6</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-5 col-12 search-select">
-                        <div class="form-group mt-4 col-md-8 col-8">
-                            <input type="search" class="form-control" name="search" placeholder="search...">
-                        </div>
-                        <div class="form-group mt-4 d-grid gap-2 col-md-3 col-3">
-                            <button type="submit" name="submit" class="btn input-color">filter</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+<div class="search-container mb-2">
+  <form action="index.php" method="POST" class="">
+    <div class="row p-3">
+      <div class="col-md-7 col-12 search-select">
+        <div class="form-group col-md-5 col-4">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject" class="form-select input-color">
+            <option selected>Select</option>
+            <?php while ($r = $courses->fetch(PDO::FETCH_ASSOC)) { ?>
+              <option value="<?php echo $r['subject'] ?>"><?php echo $r['subject'] ?></option>
+            <?php } ?>
+          </select>
         </div>
+
+        <div class="form-group col-md-3 col-4">
+          <label for="level">Level</label>
+          <select id="level" name="level" class="form-select input-color">
+            <option selected> Select</option>
+            <!-- <?php while ($r = $courses->fetch(PDO::FETCH_ASSOC)) { ?>
+              <option value="<?php echo $r['level'] ?>"><?php echo $r['level'] ?></option>
+            <?php } ?> -->
+            <option> 1</option>
+            <option> 2</option>
+            <option> 3</option>
+            <option> 4</option>
+            <option> 5</option>
+            <option> 6</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="units">Units</label>
+          <select id="units" name="units" class="form-select input-color">
+            <option selected> Select</option>
+            <option>Unit 1</option>
+            <option>Unit 2</option>
+            <option>Unit 3</option>
+            <option>Unit 4</option>
+            <option>Unit 5</option>
+            <option>Unit 6</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-5 col-12 search-select">
+        <div class="form-group mt-4 col-md-8 col-8">
+          <input type="search" class="form-control" name="search" placeholder="search...">
+        </div>
+        <div class="form-group mt-4 d-grid gap-2 col-md-3 col-3">
+          <button type="submit" name="submit" class="btn input-color">filter</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 
 <div class="row m-0">
   <div class="col-lg-4 p-4 sidebar rounded d-none d-lg-block" id="wrapper">
@@ -133,7 +170,7 @@ if (isset($_POST['submit'])) {
       </a>
 
       <div class="form-group d-block col-md-6">
-        <button type="submit" name="submit" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#courses">Add your review</button>
+        <button type="submit" name="submit" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#courses" <?php if (!isset($result)) { ?> disabled <?php   } ?>>Add your review</button>
       </div>
       <div class="form-group col-md-3">
         <select id="units" name="units" class="form-select input-color">
@@ -163,38 +200,36 @@ if (isset($_POST['submit'])) {
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <!-- <h5 class="modal-title" id="exampleModalLabel">Modal title</h5> -->
+        <h5 class="modal-title" id="exampleModalLabel">Add your review</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row">
           <div class="col-md-7 col-12">
             <div class="page-content rounded overflow-auto hei65 scroll bg-light p-2 mb-3">
-                    <p><?php if (isset($result)) echo $result['html_content'] ?></p>
+              <p><?php if (isset($result)) echo $result['html_content'] ?></p>
             </div>
           </div>
           <div class="col-md-5 col-12">
             <div class="page-content rounded overflow-auto hei30 scroll bg-light p-2 mb-3">
-              <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical
-                Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at
-                Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem
-                Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable
-                source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes
-                of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular
-                during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in
-                section 1.10.32.</p>
+              <?php foreach ($comments as $item) { ?>
+                <div class="alert alert-info"><?php echo $item; ?></div>
+              <?php } ?>
             </div>
-            <div class="search-select">
-              <div class="form-group mt-4 col-md-8 col-8">
-                <input type="text" class="form-control" name="comment" placeholder="your comment">
+            <form action="<?= $_SERVER['PHP_SELF']; ?>" method="POST">
+              <div class="search-select">
+                <div class="form-group mt-4 col-md-8 col-8">
+                  <input type="text" class="form-control" name="comment" placeholder="your comment">
+                  <input type="text" class="form-control d-none" name="course_id" value="<?php if (isset($result)) echo $result['id'] ?>">
+                </div>
+                <div class="form-group mt-4 d-grid gap-2 col-md-3 col-3">
+                  <button type="submit" name="add_comment" class="btn input-color">Add</button>
+                </div>
               </div>
-              <div class="form-group mt-4 d-grid gap-2 col-md-3 col-3">
-                <button type="submit" name="add" class="btn input-color">Add</button>
-              </div>
-            </div>
-            <div class="form-group mt-4 d-grid gap-2">
+              <!-- <div class="form-group mt-4 d-grid gap-2">
               <button type="submit" name="submit" class="btn input-color">Send your update review</button>
-            </div>
+            </div> -->
+            </form>
           </div>
         </div>
       </div>

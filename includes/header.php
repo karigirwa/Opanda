@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 
@@ -7,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="includes/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
     <title>O'Genious Panda - <?php echo $title ?></title>
 </head>
 
@@ -28,7 +29,7 @@
                 </li>
             </ul>
         </nav>
-        
+
         <!-- <div class="search-container mb-2">
             <form action="index.php" method="POST" class="">
                 <div class="row p-3">
